@@ -27,11 +27,15 @@ function deleteCache(key) {
 router.post('/cache', (req, res) => {
     const { key, value } = req.body;
     if (!key || !value) return res.status(400).json({ error: 'Key and value required' });
-    if (cache.size >= MAX_CACHE_SIZE && !cache.has(key)) {
+    if (cache.size >= MAX_CACHE_SIZE) {
         return res.status(400).json({ error: 'Cache limit reached' });
     }
-    setCache(key, value);
-    res.json({ message: 'Stored successfully', key, value});
+    if (!cache.has(key)) {
+     setCache(key, value);
+     return res.json({ message: 'Stored successfully', key, value})
+    }else{
+        res.json({message:"Not Stored , Already Cached", key, value })
+    }
 });
 
 router.get('/cache/:key', (req, res) => {
